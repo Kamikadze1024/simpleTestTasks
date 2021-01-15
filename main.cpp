@@ -1,6 +1,7 @@
 #include <iostream>
 #include <memory>
 #include <array>
+#include <map>
 
 /*
  * Задача 1
@@ -34,9 +35,36 @@ int calculatePrimeNumbers(int *resArr, int n) {
     return primeNumbsCnt;
 }
 
-int main() {
-    int N = 100;
+/*
+ * Задача 2
+ * Написать функцию, которая считает количество слов каждой длины
+ * работает только с ASCII
+ */
+std::map<int, int> exercise2(std::string &str) {
+    int cntr = 0;
+    std::map<int, int> res;
 
+    for(unsigned int i = 0; i < str.length(); i++) {
+        char c = str[i];
+        if((c == ' ') || (i == (str.length() - 1))) {
+            if(cntr != 0) {
+                if(i == (str.length() - 1)) {
+                    cntr++;
+                }
+                res[cntr]++;
+                cntr = 0;
+            }
+        } else {
+            cntr++;
+        }
+    }
+    return res;
+}
+
+
+int main() {
+    //Задача 1
+    /*int N = 100;
 
     //вариант с функцией
     //массив для простых чисел
@@ -46,7 +74,7 @@ int main() {
     //вывожу на экран
     for(decltype(prNumbsCnt) i = 0; i < (prNumbsCnt); i++) {
         std::cout << prime[i] << std::endl;
-    }
+    }*/
 
     //вариант с лямбдой
     //массив для простых чисел
@@ -85,6 +113,17 @@ int main() {
     for(decltype(prNumbsCnt) i = 0; i < (prNumbsCnt); i++) {
         std::cout << prime[i] << std::endl;
     }*/
+
+    //Задача 2
+    std::cout << "Введите строку:" << std::endl;
+    std::string msg;
+    std::getline(std::cin, msg);
+
+    std::map<int, int> res = exercise2(msg);
+
+    for(auto v : res) {
+        std::cout << v.first << " " << v.second << std::endl;
+    }
 
     return 0;
 }
