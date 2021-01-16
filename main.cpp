@@ -9,7 +9,7 @@
  * Вычислить простые числа до N и
  * записать их в массив. Вернет количество простых чисел
  */
-//вариант с функцией
+//для варианта с функцией
 int calculatePrimeNumbers(int *resArr, int n) {
     //выделяю память под решето Эратосфена
     int *arr = new int[(n + 1)];
@@ -36,6 +36,60 @@ int calculatePrimeNumbers(int *resArr, int n) {
     return primeNumbsCnt;
 }
 
+//для вызова задачи1 из main
+void executeTask1() {
+    int N = 100;
+
+    //вариант с функцией
+    //массив для простых чисел
+    int *prime = new int[(N + 1)];
+    //получаю заполненный простыми числами массив
+    auto prNumbsCnt = calculatePrimeNumbers(prime, 100);
+    //вывожу на экран
+    for(decltype(prNumbsCnt) i = 0; i < (prNumbsCnt); i++) {
+        std::cout << prime[i] << std::endl;
+    }
+
+    //вариант с лямбдой
+    //массив для простых чисел
+    int *prime2 = new int[(N + 1)];
+
+    //получаю лямбду
+    auto calcPrNumbs = [&](int *resArr, int n) {
+        //выделяю память под решето Эратосфена
+        int *arr = new int[(n + 1)];
+
+        //заполняю решето
+        for(auto i = 0; i <= n; i++) {
+            arr[i] = i;
+        }
+
+        int primeNumbsCnt = 0;
+
+        for(auto i = 2; i <= n; i++) {
+            //если k простое
+            if(arr[i] != 0) {
+                resArr[primeNumbsCnt] = arr[i];
+                primeNumbsCnt++;
+                //вычеркиваю кратные n
+                for(auto j = (i * i); j <= n; j +=i ) {
+                    arr[j] = 0;
+                }
+            }
+        }
+
+        return primeNumbsCnt;
+    };
+
+    //получаю заполненный простыми числами массив
+    decltype(auto) prNumbsCnt2 = calcPrNumbs(prime2, 100);
+
+    //вывожу на экран
+    for(decltype(prNumbsCnt2) i = 0; i < (prNumbsCnt2); i++) {
+        std::cout << prime2[i] << std::endl;
+    }
+}
+
 /*
  * Задача 2
  * Написать функцию, которая считает количество слов каждой длины
@@ -60,6 +114,19 @@ std::map<int, int> exercise2(std::string &str) {
         }
     }
     return res;
+}
+
+//для вызова задачи 2 из main
+void executeTask2() {
+    std::cout << "Введите строку:" << std::endl;
+    std::string msg;
+    std::getline(std::cin, msg);
+
+    std::map<int, int> res = exercise2(msg);
+
+    for(auto v : res) {
+        std::cout << v.first << " " << v.second << std::endl;
+    }
 }
 
 /*
@@ -119,70 +186,8 @@ int removeEveryFifth(ListNode<T> *first, ListNode<T> *last, int size) {
     return sizeCounter;
 }
 
-int main() {
-    //Задача 1
-    /*int N = 100;
-
-    //вариант с функцией
-    //массив для простых чисел
-    int *prime = new int[(N + 1)];
-    //получаю заполненный простыми числами массив
-    auto prNumbsCnt = calculatePrimeNumbers(prime, 100);
-    //вывожу на экран
-    for(decltype(prNumbsCnt) i = 0; i < (prNumbsCnt); i++) {
-        std::cout << prime[i] << std::endl;
-    }*/
-
-    //вариант с лямбдой
-    //массив для простых чисел
-    /*int *prime = new int[(N + 1)];
-    //получаю лямбду
-    auto calcPrNumbs = [&](int *resArr, int n) {
-        //выделяю память под решето Эратосфена
-        int *arr = new int[(n + 1)];
-
-        //заполняю решето
-        for(auto i = 0; i <= n; i++) {
-            arr[i] = i;
-        }
-
-        int primeNumbsCnt = 0;
-
-        for(auto i = 2; i <= n; i++) {
-            //если k простое
-            if(arr[i] != 0) {
-                resArr[primeNumbsCnt] = arr[i];
-                primeNumbsCnt++;
-                //вычеркиваю кратные n
-                for(auto j = (i * i); j <= n; j +=i ) {
-                    arr[j] = 0;
-                }
-            }
-        }
-
-        return primeNumbsCnt;
-    };
-
-    //получаю заполненный простыми числами массив
-    decltype(auto) prNumbsCnt = calcPrNumbs(prime, 100);
-
-    //вывожу на экран
-    for(decltype(prNumbsCnt) i = 0; i < (prNumbsCnt); i++) {
-        std::cout << prime[i] << std::endl;
-    }*/
-
-    //Задача 2
-    /*std::cout << "Введите строку:" << std::endl;
-    std::string msg;
-    std::getline(std::cin, msg);
-
-    std::map<int, int> res = exercise2(msg);
-
-    for(auto v : res) {
-        std::cout << v.first << " " << v.second << std::endl;
-    }*/
-
-    //Задача 3
+//Для вызова задачи 3 из main
+void executeTask3() {
     //инициализирую список
     ListNode<int> *first = nullptr;
     ListNode<int> *last  = nullptr;
@@ -204,7 +209,7 @@ int main() {
 
     if(newSize < 0) {
         std::cout << "Элементов в списке слишком мало" << std::endl;
-        return 0;
+        return;
     }
 
     //вывод результата
@@ -214,6 +219,27 @@ int main() {
         curr = curr->m_next;
     }
     std::cout << std::endl;
+}
 
+
+/*
+ * Задача 4.
+ * Функция принимает 32 битное целое число без знака
+ * и возвращает максимальное и минимальное 32-битные целые
+ * числа, которые могут  быть получены с использованием
+ * тех-же чисел битов, установленных в 1, что и во взятом
+ * числе
+ */
+std::pair<uint32_t, uint32_t> exercise4(uint32_t value) {
+
+}
+
+//Для вызова задачи 4 из main
+void executeTask4() {
+
+}
+
+int main() {
+    executeTask4();
     return 0;
 }
