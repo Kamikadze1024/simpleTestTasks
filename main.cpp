@@ -72,6 +72,7 @@ std::map<int, int> exercise2(std::string &str) {
  *     SomeDataType payload;
  * };
  */
+static const int CONST_ELEM_NUM = 5;
 //Элемент списка
 template<typename T>
 struct ListNode {
@@ -81,90 +82,42 @@ struct ListNode {
     ListNode(ListNode* next, T data) : m_next(next), m_data(data) {}
 };
 
-//сам список
-template<typename A>
-class SimpleList {
-private:
-    ListNode<A> *m_first;
-    ListNode<A> *m_last;
-    int          m_size;
+template<typename T>
+int removeEveryFifth(ListNode<T> *first, ListNode<T> *last, int size) {
+    if(size < (CONST_ELEM_NUM - 1)) {
+        return - 1;
+    }
 
-public:
-    SimpleList() : m_first(nullptr), m_last(nullptr), m_size(0) {}
-    ~SimpleList();
-
-    //итератор
-    template<typename T>
-    class Iterator {
-        //указатель на текущий узел
-        ListNode<T>      *m_node;
-        //указатель на список
-        const SimpleList *m_list;
-
-    public:
-        Iterator(const SimpleList* list, ListNode<T>* node):
-            m_node(node), m_list(list) {}
-
-        //возвращает данные ноды при *it
-        T& operator*() { return m_node->m_data; }
-
-        //проверка итераторов на неравенство
-        bool operator!=(const Iterator &lhs) const {
-            return ((this->m_list != lhs.m_list)
-                    || (this->m_node != lhs.m_node));
-        }
-
-        //проверка итераторов на равенство
-        bool operator==(const Iterator &lhs) const {
-            return ((this->m_list == lhs.m_list)
-                    && (this->m_node == lhs.m_node));
-        }
-
-        //получить итератор на следующий элемени
-        Iterator next() const {
-            if(m_node != nullptr) {
-                return Iterator(m_list, m_node->m_next);
+    int decimator   = 0;
+    int sizeCounter = size;
+    ListNode<T> *curr  = first;
+    ListNode<T> *currM = nullptr;;
+    while(true) {
+        if(curr == last) {
+            if(decimator == (CONST_ELEM_NUM - 1)) {
+                last = currM;
+                currM->m_next = nullptr;
+                delete curr;
+                sizeCounter--;
             }
-            return *this;
+            break;
         }
 
-        //инкремент итератора
-        Iterator& operator++() {
-            if(m_node != nullptr) {
-                m_node = m_node->m_next;
-            }
-            return *this;
+        if(decimator == (CONST_ELEM_NUM - 1)) {
+            currM->m_next = curr->m_next;
+            delete curr;
+            curr = currM->m_next;
+            sizeCounter--;
+            decimator = 0;
+            continue;
         }
-    };
 
-    //вернуть итератор на первый элемент
-    Iterator<A> begin() {
-        return Iterator<A>(this, m_first);
+        decimator++;
+        currM = curr;
+        curr  = curr->m_next;
     }
-
-    //вернуть итератор на последний элемент
-    Iterator<A> end() {
-        return Iterator<A>(this, m_last);
-    }
-
-    void push_back(A &value) {
-        ListNode<A> *newNode = new ListNode<A>(nullptr, value);
-        if(m_first == nullptr) {
-            m_first = newNode;
-            m_last  = newNode;
-            return;
-        }
-        m_last->m_next = newNode;
-        m_last = newNode;
-    }
-
-    //размер списка
-    int size() const noexcept {
-        return m_size;
-    }
-};
-
-
+    return sizeCounter;
+}
 
 int main() {
     //Задача 1
@@ -230,14 +183,35 @@ int main() {
     }*/
 
     //Задача 3
-    SimpleList<int> sl;
-    for(int i = 0; i < 13; i++) {
-        sl.push_back(i);
+    //инициализирую список
+    ListNode<int> *first = nullptr;
+    ListNode<int> *last  = nullptr;
+    int            size  = 0;
+    for(int i = 0; i < 10; i++) {
+        ListNode<int> *ln = new ListNode<int>(nullptr, i);
+        if(first == nullptr) {
+            first = ln;
+            last  = first;
+        } else {
+            last->m_next = ln;
+            last = ln;
+        }
+        size++;
     }
 
-    SimpleList<int>::Iterator it = sl.begin();
-    for(; it != sl.end(); ++it) {
-        std::cout << *it << " ";
+    //удаление каждого пятого
+    int newSize = removeEveryFifth(first, last, size);
+
+    if(newSize < 0) {
+        std::cout << "Элементов в списке слишком мало" << std::endl;
+        return 0;
+    }
+
+    //вывод результата
+    ListNode<int> *curr = first;
+    for(int i = 0; i < newSize; i++) {
+        std::cout << curr->m_data << " ";
+        curr = curr->m_next;
     }
     std::cout << std::endl;
 
