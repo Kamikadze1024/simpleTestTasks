@@ -230,13 +230,39 @@ void executeTask3() {
  * тех-же чисел битов, установленных в 1, что и во взятом
  * числе
  */
+static const uint32_t CONST_BITS_IN_BYTE = 8;
 std::pair<uint32_t, uint32_t> exercise4(uint32_t value) {
+    //счетчики бит
+    uint32_t fromYoung = 0;
+    uint32_t fromOld   = CONST_BITS_IN_BYTE * sizeof(uint32_t) - 1;
 
+    //выходные значения
+    uint32_t maxVal = 0;
+    uint32_t minVal = 0;
+    for(uint32_t i = 0; i < (CONST_BITS_IN_BYTE * sizeof(uint32_t)); i++) {
+        //подсчитываю биты и формирую min и max числа
+        if((static_cast<bool>((1 << i) & value)) == true) {
+            //пишу нужный бит в max мальное число
+            maxVal |= (1 << fromOld);
+            fromOld--;
+
+            //пишу нужный бит в min мальное число
+            minVal |= (1 << fromYoung);
+            fromYoung++;
+        }
+    }
+
+    //современный компилятор соптимизирует
+    std::pair<uint32_t, uint32_t> res(maxVal, minVal);
+    return res;
 }
 
 //Для вызова задачи 4 из main
 void executeTask4() {
+    std::pair<uint32_t, uint32_t> res = exercise4(255);
 
+    std::cout << "Max: " << res.first << std::endl;
+    std::cout << "Min: " << res.second << std::endl;
 }
 
 int main() {
