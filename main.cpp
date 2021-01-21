@@ -3,6 +3,7 @@
 #include <array>
 #include <map>
 #include <iterator>
+#include <stack>
 
 /*
  * Задача 1
@@ -265,7 +266,87 @@ void executeTask4() {
     std::cout << "Min: " << res.second << std::endl;
 }
 
+/*
+ * Задача 5.
+ * struct TreeNode {
+ *     TreeNode *leftChild;
+ *     TreeNode *rightChild;
+ * };
+ * Написать функцию, которая вычисляет глубину дерева.
+ */
+
+int maxLevel = 0;
+
+struct TreeNode {
+    std::string m_name;
+    TreeNode *leftChild;
+    TreeNode *rightChild;
+};
+
+//максимальная глубина
+void maxDepth(TreeNode *root, int level) {
+    if(root == nullptr) {
+        return;
+    }
+
+    //спускаюсь в правое поддерево
+    maxDepth(root->rightChild, (level + 1));
+
+    for(auto i = 0; i < level; i++) {
+        std::cout << "           ";
+    }
+
+    //вывожу данные, хранимые узлом
+    std::cout << root->m_name << " " << level << std::endl;
+    stackPath.push(root->m_name);
+
+    //изменяю значения max глубины
+    if(maxLevel < level) {
+        maxLevel = level;
+    }
+
+    //спускаюсь в левое поддерево
+    maxDepth(root->leftChild, (level + 1));
+}
+
+//функция создания нового узла
+TreeNode *newNode(std::string name) {
+    TreeNode *node = new TreeNode();
+    node->m_name = name;
+    node->leftChild = nullptr;
+    node->rightChild = nullptr;
+    return node;
+}
+
+//Для вызова задачи 5 из main
+void executeTask5() {
+    //построю дерево
+    TreeNode *root = newNode("root");
+    TreeNode *l1   = newNode("l1");
+    TreeNode *r1   = newNode("r1");
+
+    root->leftChild  = l1;
+    root->rightChild = r1;
+
+    TreeNode *l2   = newNode("l2");
+    TreeNode *r2   = newNode("r2");
+    l1->leftChild  = l2;
+    l1->rightChild = r2;
+
+    TreeNode *l22  = newNode("l22");
+    TreeNode *r22  = newNode("r22");
+    r1->leftChild  = l22;
+    r1->rightChild = r22;
+
+    TreeNode *l3 = newNode("l3");
+    l22->leftChild = l3;
+
+    maxDepth(root, 0);
+
+    std::cout << "Максимальная глубина дерева = " << maxLevel << std::endl;
+}
+
 int main() {
-    executeTask4();
+    executeTask5();
     return 0;
 }
